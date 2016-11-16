@@ -6,6 +6,6 @@ args parsing example and tools for C and C++
 
 ==========
 ##Build
-* Linux:
+* Linux or Mac:
 	- ./trabis.sh
 
