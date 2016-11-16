@@ -6,13 +6,12 @@
 
 int main (int argc, char **argv)
 {
-    char* add;
+    char *add, *num;
     if((add = getenv("GETENV_ADD")))
         printf("GETENV_ADD = %s\n", add);
     else
         printf("GETENV_ADD not found\n");
 
-    char* num;
     if((num = getenv("GETENV_NUM")))
     {
         int numi = atoi(num);

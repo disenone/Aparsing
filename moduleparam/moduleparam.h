@@ -66,7 +66,7 @@ struct param_array
 	void *elem;
 };
 
-typedef _Bool bool;
+typedef int bool;
 
 /* On alpha, ia64 and ppc64 relocations to global data cannot go into
    read-only sections (which is part of respective UNIX ABI on these
