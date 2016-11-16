@@ -30,6 +30,10 @@
 #define DEBUGP(fmt, ...)
 #endif
 
+#ifdef WIN32
+# define inline __inline
+#endif
+
 char *skip_spaces(const char *str)
 {
     while (isspace(*str))
