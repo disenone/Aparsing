@@ -1,6 +1,7 @@
 // test getopt
 
 #include <getopt.h>
+#include <stdio.h>
 
 static struct option long_options[] =
 {
@@ -88,6 +89,6 @@ int main (int argc, char **argv)
         printf ("\n");
     }
 
-    exit (0);
+    return 0;
 }
 

@@ -6,6 +6,16 @@
 #include <stdint.h>
 #include <string.h>
 
+#ifdef WIN32
+# ifdef DLL_EXPORTS
+#  define EXPORTS_API _declspec(dllexport)
+# else
+#  define EXPORTS_API _declspec(dllimport)
+# endif
+#else
+# define EXPORTS_API
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -129,41 +139,41 @@ typedef _Bool bool;
 #define __param_check(name, p, type) \
 	static inline type *__check_##name(void) { return (p); }
 
-extern int param_set_byte(const char *val, struct param_info *kp);
-extern int param_get_byte(char *buffer, struct param_info *kp);
+extern EXPORTS_API int param_set_byte(const char *val, struct param_info *kp);
+extern EXPORTS_API int param_get_byte(char *buffer, struct param_info *kp);
 #define param_check_byte(name, p) __param_check(name, p, unsigned char)
 
-extern int param_set_short(const char *val, struct param_info *kp);
-extern int param_get_short(char *buffer, struct param_info *kp);
+extern EXPORTS_API int param_set_short(const char *val, struct param_info *kp);
+extern EXPORTS_API int param_get_short(char *buffer, struct param_info *kp);
 #define param_check_short(name, p) __param_check(name, p, short)
 
-extern int param_set_ushort(const char *val, struct param_info *kp);
-extern int param_get_ushort(char *buffer, struct param_info *kp);
+extern EXPORTS_API int param_set_ushort(const char *val, struct param_info *kp);
+extern EXPORTS_API int param_get_ushort(char *buffer, struct param_info *kp);
 #define param_check_ushort(name, p) __param_check(name, p, unsigned short)
 
-extern int param_set_int(const char *val, struct param_info *kp);
-extern int param_get_int(char *buffer, struct param_info *kp);
+extern EXPORTS_API int param_set_int(const char *val, struct param_info *kp);
+extern EXPORTS_API int param_get_int(char *buffer, struct param_info *kp);
 #define param_check_int(name, p) __param_check(name, p, int)
 
-extern int param_set_uint(const char *val, struct param_info *kp);
-extern int param_get_uint(char *buffer, struct param_info *kp);
+extern EXPORTS_API int param_set_uint(const char *val, struct param_info *kp);
+extern EXPORTS_API int param_get_uint(char *buffer, struct param_info *kp);
 #define param_check_uint(name, p) __param_check(name, p, unsigned int)
 
-extern int param_set_long(const char *val, struct param_info *kp);
-extern int param_get_long(char *buffer, struct param_info *kp);
+extern EXPORTS_API int param_set_long(const char *val, struct param_info *kp);
+extern EXPORTS_API int param_get_long(char *buffer, struct param_info *kp);
 #define param_check_long(name, p) __param_check(name, p, long)
 
-extern int param_set_ulong(const char *val, struct param_info *kp);
-extern int param_get_ulong(char *buffer, struct param_info *kp);
+extern EXPORTS_API int param_set_ulong(const char *val, struct param_info *kp);
+extern EXPORTS_API int param_get_ulong(char *buffer, struct param_info *kp);
 #define param_check_ulong(name, p) __param_check(name, p, unsigned long)
 
-extern int param_set_charp(const char *val, struct param_info *kp);
-extern int param_get_charp(char *buffer, struct param_info *kp);
+extern EXPORTS_API int param_set_charp(const char *val, struct param_info *kp);
+extern EXPORTS_API int param_get_charp(char *buffer, struct param_info *kp);
 #define param_check_charp(name, p) __param_check(name, p, char *)
 
 /* For historical reasons "bool" parameters can be (unsigned) "int". */
-extern int param_set_bool(const char *val, struct param_info *kp);
-extern int param_get_bool(char *buffer, struct param_info *kp);
+extern EXPORTS_API int param_set_bool(const char *val, struct param_info *kp);
+extern EXPORTS_API int param_get_bool(char *buffer, struct param_info *kp);
 #define param_check_bool(name, p)					\
 	static inline void __check_##name(void)				\
 	{								\
@@ -172,8 +182,8 @@ extern int param_get_bool(char *buffer, struct param_info *kp);
 			     !__same_type(*(p), int));			\
 	}
 
-extern int param_set_invbool(const char *val, struct param_info *kp);
-extern int param_get_invbool(char *buffer, struct param_info *kp);
+extern EXPORTS_API int param_set_invbool(const char *val, struct param_info *kp);
+extern EXPORTS_API int param_get_invbool(char *buffer, struct param_info *kp);
 #define param_check_invbool(name, p) __param_check(name, p, bool)
 
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
@@ -191,13 +201,13 @@ extern int param_get_invbool(char *buffer, struct param_info *kp);
 #define module_param_array(name, type, nump)		\
 	module_param_array_named(name, name, type, nump)
 
-extern int param_array_set(const char *val, struct param_info *kp);
-extern int param_array_get(char *buffer, struct param_info *kp);
+extern EXPORTS_API int param_array_set(const char *val, struct param_info *kp);
+extern EXPORTS_API int param_array_get(char *buffer, struct param_info *kp);
 
-extern int param_set_copystring(const char *val, struct param_info *kp);
-extern int param_get_string(char *buffer, struct param_info *kp);
+extern EXPORTS_API int param_set_copystring(const char *val, struct param_info *kp);
+extern EXPORTS_API int param_get_string(char *buffer, struct param_info *kp);
 
-int parse_args(struct param_info *params,
+extern EXPORTS_API int parse_args(struct param_info *params,
         int num,
         int argc,
         char **argv,

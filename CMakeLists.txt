@@ -12,7 +12,7 @@ message("c flags ${CMAKE_C_FLAGS}")
 set(GETOPT_DIR ${PROJECT_SOURCE_DIR}/getopt)
 aux_source_directory(${GETOPT_DIR} GETOPT_SOURCES) 
 list(REMOVE_ITEM GETOPT_SOURCES "${GETOPT_DIR}/getopt_test.c")
-add_library(getopt SHARED ${GETOPT_SOURCES})
+cxx_shared_library(getopt "-DDLL_EXPORTS" ${GETOPT_SOURCES})
 include_directories(${GETOPT_DIR})
 add_executable(getopt_test "${GETOPT_DIR}/getopt_test.c")
 target_link_libraries(getopt_test getopt) 
@@ -25,7 +25,7 @@ add_executable(getenv_test "${GETENV_DIR}/getenv_test.c")
 
 # getparams
 set(MODULEPARAM_DIR ${PROJECT_SOURCE_DIR}/moduleparam)
-add_library(moduleparam SHARED ${MODULEPARAM_DIR}/moduleparam.c)
+cxx_shared_library(moduleparam "-DDLL_EXPORTS" ${MODULEPARAM_DIR}/moduleparam.c)
 add_executable(moduleparam_test "${MODULEPARAM_DIR}/moduleparam_test.c")
 target_link_libraries(moduleparam_test moduleparam) 
 
