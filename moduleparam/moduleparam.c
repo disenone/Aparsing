@@ -20,7 +20,10 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
-#include <malloc.h>
+
+#ifndef __APPLE__
+# include <malloc.h>
+#endif
 
 #ifdef _DEBUG
 #define printk printf
@@ -142,6 +145,8 @@ int parse_args(struct param_info *params,
         int (*unknown)(char *param, char *val))
 {
 	char *param, *val;
+    int ret = 0;
+    char *args, *orig_args;
 
     /* count args len */
     int i;
@@ -150,8 +155,8 @@ int parse_args(struct param_info *params,
         len += strlen(argv[i]);
     }
 
-    char *args = (char *)malloc(len);
-    char *orig_args = args;
+    args = (char *)malloc(len);
+    orig_args = args;
     args[0] = '\0';
 
     for (i = 0; i < argc; ++i) {
@@ -165,7 +170,6 @@ int parse_args(struct param_info *params,
 	/* Chew leading spaces */
 	args = skip_spaces(args);
 
-	int ret = 0;
 	while (*args) {
 		args = next_arg(args, &param, &val);
 		ret = parse_one(param, val, params, num, unknown);
