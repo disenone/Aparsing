@@ -83,17 +83,13 @@ typedef _Bool bool;
 /* Chosen so that structs with an unsigned long line up. */
 #define MAX_PARAM_PREFIX_LEN (64 - sizeof(unsigned long))
 
-#ifndef __same_type
-# define __same_type(a, b) __builtin_types_compatible_p(typeof(a), typeof(b))
-#endif
-
 #define MODULE_INIT_VARIABLE __module_params
 #define MODULE_INIT_VARIABLE_NUM __module_params_index
 
 #define init_module_param(num)  \
     static int MODULE_INIT_VARIABLE_NUM = 0; \
     static struct param_info MODULE_INIT_VARIABLE[num];  \
-    bzero(&MODULE_INIT_VARIABLE, sizeof(MODULE_INIT_VARIABLE))
+    memset(&MODULE_INIT_VARIABLE, 0, sizeof(MODULE_INIT_VARIABLE))
 
 #define BUILD_BUG_ON_ZERO(e) (sizeof(char[1 - 2 * !!(e)]) - 1)
 
@@ -110,20 +106,18 @@ typedef _Bool bool;
     MODULE_INIT_VARIABLE[MODULE_INIT_VARIABLE_NUM]varg; \
     ++MODULE_INIT_VARIABLE_NUM
 
-#define module_param_call(name, set, get, varg)			      \
-	__module_param_call(MODULE_PARAM_PREFIX,			      \
-			    name, set, get, .arg = varg,			      \
-			    __same_type(*(varg), bool))
+#define module_param_call(name, set, get, varg, isbool)     \
+	__module_param_call(MODULE_PARAM_PREFIX,			    \
+			    name, set, get, .arg = varg, 0)			    \
 
-#define module_param_named(name, value, type)			   \
-	/*param_check_##type(name, &(value));			*/	   \
-	module_param_call(name, param_set_##type, param_get_##type, &value); \
+#define module_param_named(name, value, type)			    \
+	module_param_call(name, param_set_##type, param_get_##type, &value, 0)
 
 #define module_param(name, type)				\
 	module_param_named(name, name, type)
 
-#define parse_params(argc, argv, func)      \
-    parse_args(MODULE_INIT_VARIABLE, MODULE_INIT_VARIABLE_NUM, argc, argv, func)
+#define module_param_bool(name)    \
+    module_param_call(name, param_set_bool, param_get_bool, &name, 1)
 
 /* Actually copy string: maxlen param is usually sizeof(string). */
 #define module_param_string(name, string, len)			\
@@ -177,9 +171,6 @@ extern EXPORTS_API int param_get_bool(char *buffer, struct param_info *kp);
 #define param_check_bool(name, p)					\
 	static inline void __check_##name(void)				\
 	{								\
-		BUILD_BUG_ON(!__same_type(*(p), bool) &&		\
-			     !__same_type(*(p), unsigned int) &&	\
-			     !__same_type(*(p), int));			\
 	}
 
 extern EXPORTS_API int param_set_invbool(const char *val, struct param_info *kp);
@@ -196,7 +187,7 @@ extern EXPORTS_API int param_get_invbool(char *buffer, struct param_info *kp);
 	__module_param_call(MODULE_PARAM_PREFIX, name,			\
 			    param_array_set, param_array_get,		\
 			    .arr = &__param_arr_##name,			\
-			    __same_type(array[0], bool));		\
+			    0);		\
 
 #define module_param_array(name, type, nump)		\
 	module_param_array_named(name, name, type, nump)
@@ -212,6 +203,10 @@ extern EXPORTS_API int parse_args(struct param_info *params,
         int argc,
         char **argv,
         int (*unknown)(char *param, char *val));
+
+#define parse_params(argc, argv, func)      \
+    parse_args(MODULE_INIT_VARIABLE, MODULE_INIT_VARIABLE_NUM, argc, argv, func)
+
 #ifdef __cplusplus
 }
 #endif

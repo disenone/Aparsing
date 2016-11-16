@@ -20,13 +20,14 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
+#include <malloc.h>
 
-#ifdef DEBUG
+#ifdef _DEBUG
 #define printk printf
 #define DEBUGP printk
 #else
-#define printk(fmt, a...)
-#define DEBUGP(fmt, a...)
+#define printk(fmt, ...)
+#define DEBUGP(fmt, ...)
 #endif
 
 char *skip_spaces(const char *str)
@@ -140,7 +141,7 @@ int parse_args(struct param_info *params,
 
     /* count args len */
     int i;
-    int len = 1;
+    int len = num + 1;
     for (i = 0;i < argc; ++i) {
         len += strlen(argv[i]);
     }
@@ -149,7 +150,7 @@ int parse_args(struct param_info *params,
     char *orig_args = args;
     args[0] = '\0';
 
-    for (i = 0;i < argc; ++i) {
+    for (i = 0; i < argc; ++i) {
         strncat(args, argv[i], len);
         if(i < argc - 1)
             strcat(args, " ");
@@ -170,12 +171,12 @@ int parse_args(struct param_info *params,
                 printk("Unknown parameter '%s'\n", param);
                 goto error;
             case -ENOSPC:
-                printk("'%s' too large for parameter '%s'\n", val ?: "", param);
+                printk("'%s' too large for parameter '%s'\n", val ? val : "", param);
                 goto error;
             case 0:
                 break;
             default:
-                printk("'%s' invalid for parameter '%s'\n", val ?: "", param);
+                printk("'%s' invalid for parameter '%s'\n", val ? val : "", param);
                 goto error;
 		}
 	}
@@ -359,7 +360,7 @@ static int param_array(const char *name,
 
 		if (ret != 0)
 			return ret;
-		kp.arg += elemsize;
+		kp.arg = (char *)kp.arg + elemsize;
 		val += len+1;
 		(*num)++;
 	} while (save == ',');
@@ -378,8 +379,7 @@ int param_array_set(const char *val, struct param_info *kp)
 	unsigned int temp_num;
 
 	return param_array(kp->name, val, 1, arr->max, arr->elem,
-			   arr->elemsize, arr->set, kp->flags,
-			   arr->num ?: &temp_num);
+			   arr->elemsize, arr->set, kp->flags, arr->num);
 }
 
 int param_array_get(char *buffer, struct param_info *kp)
@@ -392,7 +392,7 @@ int param_array_get(char *buffer, struct param_info *kp)
 	for (i = off = 0; i < (arr->num ? *arr->num : arr->max); i++) {
 		if (i)
 			buffer[off++] = ',';
-		p.arg = arr->elem + arr->elemsize * i;
+		p.arg = (char *)arr->elem + arr->elemsize * i;
 		ret = arr->get(buffer + off, &p);
 		if (ret < 0)
 			return ret;

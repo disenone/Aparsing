@@ -3,7 +3,7 @@
 
 
 static int test = 0;
-static bool btest = 1;
+static bool btest = 0;
 static unsigned int latest_num = 0;
 static long latest[10] = {0};
 static char strtest[10] = "\0";
@@ -18,7 +18,7 @@ int main (int argc, char **argv)
 {
     init_module_param(10);
     module_param(test, int);
-    module_param(btest, bool);
+    module_param_bool(btest);
     module_param_array(latest, long, &latest_num);
     module_param_string(strtest, strtest, sizeof(strtest));
 
