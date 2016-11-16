@@ -419,6 +419,7 @@ int param_set_copystring(const char *val, struct param_info *kp)
 	return 0;
 }
 
+#ifndef __APPLE__
 /**
  * strlcpy - Copy a %NUL terminated string into a sized buffer
  * @dest: Where to copy the string to
@@ -441,6 +442,7 @@ size_t strlcpy(char *dest, const char *src, size_t size)
     }
     return ret;
 }
+#endif
 
 int param_get_string(char *buffer, struct param_info *kp)
 {

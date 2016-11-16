@@ -82,8 +82,7 @@ typedef _Bool bool;
 
 #define init_module_param(num)  \
     static int MODULE_INIT_VARIABLE_NUM = 0; \
-    static struct param_info MODULE_INIT_VARIABLE[num]  \
-    __attribute__ ((__section__ ("__param"),aligned(sizeof(void *)))); \
+    static struct param_info MODULE_INIT_VARIABLE[num];  \
     bzero(&MODULE_INIT_VARIABLE, sizeof(MODULE_INIT_VARIABLE))
 
 #define BUILD_BUG_ON_ZERO(e) (sizeof(char[1 - 2 * !!(e)]) - 1)
