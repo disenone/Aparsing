@@ -1,2 +1,2 @@
-# Aparsing
-args parsing tools for C and C++
+# aparsing
+args parsing example and tools for C and C++
