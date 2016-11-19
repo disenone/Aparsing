@@ -21,8 +21,8 @@ static char simple_options[] = "a:bc:d:0123456789";
 void usage()
 {
     char buf[1024] = "\0";
-    struct option *op = long_options;
-    while(op->name)
+    struct option *op;
+    for(op = long_options; op->name; ++op)
     {
         char opbuf[128] = "\0";
         if(op->has_arg)
@@ -31,7 +31,6 @@ void usage()
             sprintf(opbuf, "[--%s] ", op->name);
 
         strncat(buf, opbuf, sizeof(buf));
-        op += 1;
     }
 
     printf("usage: getopt_test [-%s] %s", simple_options, buf);
