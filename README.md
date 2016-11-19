@@ -11,3 +11,7 @@ args parsing example and tools for C and C++
 * Linux or Mac:
 	- ./trabis.sh
 
+* Windows:
+    - powershell
+    - Set-ExecutionPolicy RemoteSigned
+    - ./build.ps1
