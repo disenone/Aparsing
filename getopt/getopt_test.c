@@ -2,6 +2,7 @@
 
 #include <getopt.h>
 #include <stdio.h>
+#include <string.h>
 
 static struct option long_options[] =
 {
@@ -15,8 +16,35 @@ static struct option long_options[] =
     {0, 0, 0, 0}
 };
 
+static char simple_options[] = "a:bc:d:0123456789";
+
+void usage()
+{
+    char buf[1024] = "\0";
+    struct option *op = long_options;
+    while(op->name)
+    {
+        char opbuf[128] = "\0";
+        if(op->has_arg)
+            sprintf(opbuf, "[--%s arg] ", op->name);
+        else
+            sprintf(opbuf, "[--%s] ", op->name);
+
+        strncat(buf, opbuf, sizeof(buf));
+        op += 1;
+    }
+
+    printf("usage: getopt_test [-%s] %s", simple_options, buf);
+}
+
 int main (int argc, char **argv)
 {
+    if(argc == 1)
+    {
+        usage();
+        return 0;
+    }
+
     int c;
     int digit_optind = 0;
 
@@ -25,7 +53,7 @@ int main (int argc, char **argv)
         int this_option_optind = optind ? optind : 1;
         int longindex = -1;
 
-        c = getopt_long(argc, argv, "a:bc:d:0123456789", long_options, &longindex);
+        c = getopt_long(argc, argv, simple_options, long_options, &longindex);
         if (c == -1)
         break;
 
