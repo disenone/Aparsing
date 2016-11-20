@@ -5,6 +5,7 @@
 
 #include <stdint.h>
 #include <string.h>
+#include <assert.h>
 
 #ifdef WIN32
 # ifdef DLL_EXPORTS
@@ -84,11 +85,13 @@ typedef int bool;
 #define MAX_PARAM_PREFIX_LEN (64 - sizeof(unsigned long))
 
 #define MODULE_INIT_VARIABLE __module_params
-#define MODULE_INIT_VARIABLE_NUM __module_params_index
+#define MODULE_INIT_VARIABLE_INDEX __module_params_index
+#define MODULE_INIT_VARIABLE_NUM __module_params_num
 
 #define init_module_param(num)  \
-    static int MODULE_INIT_VARIABLE_NUM = 0; \
-    static struct param_info MODULE_INIT_VARIABLE[num];  \
+    static int MODULE_INIT_VARIABLE_INDEX = 0;			\
+	static const int MODULE_INIT_VARIABLE_NUM = num; 	\
+    static struct param_info MODULE_INIT_VARIABLE[num];	\
     memset(&MODULE_INIT_VARIABLE, 0, sizeof(MODULE_INIT_VARIABLE))
 
 #define BUILD_BUG_ON_ZERO(e) (sizeof(char[1 - 2 * !!(e)]) - 1)
@@ -98,13 +101,15 @@ typedef int bool;
    not there, read bits mean it's readable, write bits mean it's
    writable. */
 #define __module_param_call(prefix, vname, vset, vget, varg, isbool)  \
+	assert(MODULE_INIT_VARIABLE_INDEX < MODULE_INIT_VARIABLE_NUM &&	\
+		"module param num exceed max num, please edit init_module_param !!"); 	\
 	static const char __param_str_##vname[] = prefix #vname;		\
-    MODULE_INIT_VARIABLE[MODULE_INIT_VARIABLE_NUM].name = __param_str_##vname; \
-    MODULE_INIT_VARIABLE[MODULE_INIT_VARIABLE_NUM].flags = isbool ? PARAM_ISBOOL : 0; \
-    MODULE_INIT_VARIABLE[MODULE_INIT_VARIABLE_NUM].set = vset; \
-    MODULE_INIT_VARIABLE[MODULE_INIT_VARIABLE_NUM].get = vget; \
-    MODULE_INIT_VARIABLE[MODULE_INIT_VARIABLE_NUM]varg; \
-    ++MODULE_INIT_VARIABLE_NUM
+    MODULE_INIT_VARIABLE[MODULE_INIT_VARIABLE_INDEX].name = __param_str_##vname; \
+    MODULE_INIT_VARIABLE[MODULE_INIT_VARIABLE_INDEX].flags = isbool ? PARAM_ISBOOL : 0; \
+    MODULE_INIT_VARIABLE[MODULE_INIT_VARIABLE_INDEX].set = vset; \
+    MODULE_INIT_VARIABLE[MODULE_INIT_VARIABLE_INDEX].get = vget; \
+    MODULE_INIT_VARIABLE[MODULE_INIT_VARIABLE_INDEX]varg; \
+    ++MODULE_INIT_VARIABLE_INDEX
 
 #define module_param_call(name, set, get, varg, isbool)     \
 	__module_param_call(MODULE_PARAM_PREFIX,			    \

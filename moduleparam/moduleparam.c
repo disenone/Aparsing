@@ -77,7 +77,7 @@ static int parse_one(char *param,
 	}
 
 	if (handle_unknown) {
-		DEBUGP("Unknown argument: calling %p\n", handle_unknown);
+		//DEBUGP("Unknown argument: calling %p\n", handle_unknown);
 		return handle_unknown(param, val);
 	}
 
@@ -144,14 +144,22 @@ int parse_args(struct param_info *params,
         char **argv,
         int (*unknown)(char *param, char *val))
 {
+
+	// ignore the first argv
+	if (argc <= 1)
+		return 0;
+
+	argc -= 1;
+	argv += 1;
+
 	char *param, *val;
     int ret = 0;
     char *args, *orig_args;
 
     /* count args len */
     int i;
-    int len = num + 1;
-    for (i = 0;i < argc; ++i) {
+    int len = argc + 1;
+    for (i = 0; i < argc; ++i) {
         len += strlen(argv[i]);
     }
 
