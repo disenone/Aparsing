@@ -16,7 +16,7 @@ static struct option long_options[] =
     {0, 0, 0, 0}
 };
 
-static char simple_options[] = "a:bc:d:0123456789";
+static char simple_options[] = "a:bc::d:0123456789";
 
 void usage()
 {
@@ -59,15 +59,11 @@ int main (int argc, char **argv)
         {
             // long option
             case 0:
-                if(long_options[longindex].has_arg == required_argument)
-                {
-                    printf("option '%s' with value '%s'\n", \
-                        long_options[longindex].name, optarg);
-                }
-                else
-                {
-                    printf("option '%s'\n", long_options[longindex].name);
-                }
+                   printf("option %s", long_options[longindex].name);
+                   if (optarg)
+                       printf(" with arg %s", optarg);
+                   printf("\n");
+                   break;
 
                 break;
 
@@ -97,7 +93,10 @@ int main (int argc, char **argv)
                 break;
 
             case 'c':
-                printf("option c with value '%s'\n", optarg);
+                if(optarg)
+                    printf("option c with value '%s'\n", optarg);
+                else
+                    printf("option c\n");
                 break;
 
             case '?':
