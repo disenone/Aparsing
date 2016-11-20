@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.6.2)
-project(parsingargs CXX C)
+project(aparsing CXX C)
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
 include(internal_utils.cmake)
