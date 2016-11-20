@@ -1,7 +1,6 @@
 #include "moduleparam.h"
 #include <stdio.h>
 
-
 static int test = 0;
 static bool btest = 0;
 static unsigned int latest_num = 0;
